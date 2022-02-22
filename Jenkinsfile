@@ -6,7 +6,9 @@ node {
   {
     def scannerHome = tool 'sonarqube'
     withSonarQubeEnv() {
-      sh "${scannerHome}/bin/sonar-scanner --version"
+      sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll begin /k:\"Deneme\""
+      sh "dotnet build"
+      sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll end"
     }
   }
 }
