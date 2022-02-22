@@ -1,13 +1,11 @@
 node {
   stage('SCM') {
-    checkout scm
+    git 'https://github.com/busraktan/NetCoreDeneme.git'
   }
-  stage('SonarQube Analysis') {
-    def scannerHome = tool 'SonarScanner for MSBuild'
-    withSonarQubeEnv() {
-      sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll begin /k:\"Deneme\""
-      sh "dotnet build"
-      sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll end"
+  stage('SonarQube analysis') {
+    def scannerHome = tool 'SonarScanner 5.4';
+    withSonarQubeEnv('My SonarQube Server') { // If you have configured more than one global server connection, you can specify its name
+      sh "${scannerHome}/bin/sonar-scanner"
     }
   }
 }
