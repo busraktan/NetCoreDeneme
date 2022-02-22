@@ -2,13 +2,11 @@ node {
   stage('SCM') {
     checkout scm
   }
-  stage('SonarQube Analysis') {
-    def msbuildHome = tool 'MSBuild'
+  stage('SonarQube Analysis') 
+  {
     def scannerHome = tool 'sonarqube'
     withSonarQubeEnv() {
-      sh "\"${scannerHome}\\SonarScanner.MSBuild.exe\" begin /k:\"Deneme\""
-      sh "\"${msbuildHome}\\MSBuild.exe\" /t:Rebuild"
-      sh "\"${scannerHome}\\SonarScanner.MSBuild.exe\" end"
+      sh "${scannerHome}/bin/sonar-scanner --version"
     }
   }
 }
