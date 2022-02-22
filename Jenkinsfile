@@ -1,14 +1,22 @@
-node {
-  stage('SCM') {
-    checkout scm
-  }
-  stage('SonarQube Analysis') {
-    def msbuildHome = tool 'MSBuild'
-    def scannerHome = tool 'sonarqube'
-    withSonarQubeEnv() {
-      sh "\"${scannerHome}\\SonarScanner.MSBuild.exe\" begin /k:\"Deneme\""
-      sh "\"${msbuildHome}\\MSBuild.exe\" /t:Rebuild"
-      sh "\"${scannerHome}\\SonarScanner.MSBuild.exe\" end"
+pipeline {
+    agent any
+    stages {
+        stage('Clone sources') {
+            steps {
+                git url: 'https://github.com/tkgregory/sonarqube-jacoco-code-coverage.git'
+            }
+        }
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh "./gradlew sonarqube"
+                }
+            }
+        }
+        stage("Quality gate") {
+            steps {
+                waitForQualityGate abortPipeline: true
+            }
+        }
     }
-  }
 }
